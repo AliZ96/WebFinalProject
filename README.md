@@ -6,7 +6,7 @@ This is a car rental web application built with ASP.NET Core MVC. The applicatio
 ## Features
 - Car search and filtering (make, transmission, price)
 - Rental office locations displayed on a map using Leaflet.js
-- User geolocation to show nearby offices within a 1000 km radius
+- User geolocation to show nearby offices within a 30 km radius
 - Language switcher (Turkish/English)
 - Responsive design with Bootstrap
 
