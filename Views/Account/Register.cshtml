@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm">
+                <h4 class="text-center mb-3">Kayıt Ol</h4>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">E-posta</label>
+                        <input type="email" class="form-control" id="registerEmail" placeholder="E-posta adresinizi girin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Şifre</label>
+                        <input type="password" class="form-control" id="registerPassword" placeholder="Şifre belirleyin" required>
+                        <small class="text-muted">Şifre en az 8 karakter, 1 rakam ve 1 özel karakter içermelidir.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Ülke</label>
+                        <select class="form-select" id="country" required>
+                            <option value="">Ülke Seçiniz</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="city" class="form-label">Şehir</label>
+                        <select class="form-select" id="city" required>
+                            <option value="">Önce Ülke Seçiniz</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="photoUpload" class="form-label">Profil Fotoğrafı (Opsiyonel)</label>
+                        <input type="file" class="form-control" id="photoUpload">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Kayıt Ol</button>
+                    <p class="text-center mt-3">Zaten hesabınız var mı? <a href="/Account/Login">Giriş Yap</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

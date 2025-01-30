@@ -1,0 +1,160 @@
+﻿@model List<WebFinalProject.Models.Car>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Leaflet.js ve CSS dosyasını ekleyin -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<!-- Dil Değiştirme Butonu -->
+<div class="container mt-4 text-end">
+    <button id="switchLanguage" class="btn btn-secondary">🌍 Dil: Türkçe</button>
+</div>
+
+<div class="container mt-4">
+    <h4 class="text-center" data-lang="searchTitle">Araç Kiralama</h4>
+
+    <!-- 🚀 Arama ve Filtreleme Formu -->
+    <form id="searchForm" method="get">
+        <div class="mb-3">
+            <label for="search" class="form-label">Ara</label>
+            <input type="text" class="form-control" id="search" name="search" placeholder="Marka veya model girin" value="@Context.Request.Query["search"]">
+        </div>
+
+        <div class="row">
+            <!-- Marka Filtreleme -->
+            <div class="col-md-4">
+                <label for="brand" class="form-label">Marka Seç</label>
+                <select id="brand" name="brand" class="form-select">
+                    <option value="">Tümü</option>
+                    <option value="BMW" selected="@(Context.Request.Query["brand"] == "BMW")">BMW</option>
+                    <option value="Mercedes" selected="@(Context.Request.Query["brand"] == "Mercedes")">Mercedes</option>
+                    <option value="Toyota" selected="@(Context.Request.Query["brand"] == "Toyota")">Toyota</option>
+                </select>
+            </div>
+
+            <!-- Şanzıman Filtreleme -->
+            <div class="col-md-4">
+                <label for="transmission" class="form-label">Şanzıman</label>
+                <select id="transmission" name="transmission" class="form-select">
+                    <option value="">Tümü</option>
+                    <option value="Otomatik" selected="@(Context.Request.Query["transmission"] == "Otomatik")">Otomatik</option>
+                    <option value="Manuel" selected="@(Context.Request.Query["transmission"] == "Manuel")">Manuel</option>
+                </select>
+            </div>
+
+            <!-- Fiyat Sıralama -->
+            <div class="col-md-4">
+                <label for="sortPrice" class="form-label" data-lang="sortPrice"> Fiyat Sıralama</label>
+                <select id="sortPrice" name="sortPrice" class="form-select">
+                    <option value="">Varsayılan</option>
+                    <option value="asc" selected="@(Context.Request.Query["sortPrice"] == "asc")">Ucuzdan Pahalıya</option>
+                    <option value="desc" selected="@(Context.Request.Query["sortPrice"] == "desc")">Pahalıdan Ucuza</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">Filtrele</button>
+    </form>
+</div>
+
+<!-- Mevcut Araçları Listele -->
+<div class="container mt-4">
+    <h4 class="text-center" data-lang="resultsTitle">Mevcut Araçlar</h4>
+    <div id="carList" class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var car in Model)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@car.Make @car.Model</h5>
+                            <p class="card-text">Fiyat: @car.Price ₺</p>
+                            <p class="card-text" data-lang="transmissionLabel">Şanzıman: @car.Transmission</p>
+                            <p class="card-text" data-lang="kmLabel"> KM: @car.Mileage km</p>
+                            <p class="card-text" data-lang="ageLabel">Yaş: @car.Age yıl</p>
+                            <a href="#" class="btn btn-primary" data-lang="rentButton">Kirala</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p>Henüz eklenmiş araç bulunmamaktadır.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- 🚀 Konum Butonu ve Harita -->
+<div class="container text-center mt-3">
+    <button id="getLocationBtn" class="btn btn-primary">📍 Konumumu Göster</button>
+</div>
+
+<div class="container mt-4">
+    <h4 class="text-center">Harita</h4>
+    <div id="map" style="height: 400px;"></div>
+</div>
+
+<script>
+    // Harita Başlatma
+    var map = L.map('map').setView([39.9334, 32.8597], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Mesafe Hesaplama Fonksiyonu (Haversine formula)
+    function getDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Dünya'nın yarıçapı (km)
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; 
+    }
+
+ 
+    document.getElementById("getLocationBtn").addEventListener("click", function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                var userLat = position.coords.latitude;
+                var userLon = position.coords.longitude;
+                console.log("Kullanıcı Konumu:", userLat, userLon);
+                map.setView([userLat, userLon], 12);
+                L.marker([userLat, userLon]).addTo(map)
+                    .bindPopup("Şu an bulunduğunuz konum").openPopup();
+
+                // Ofis verilerini al
+                fetch('/Home/GetOffices')
+                    .then(response => response.json()) 
+                    .then(offices => {
+                        offices.forEach(office => {
+                        
+                            var distance = getDistance(userLat, userLon, office.latitude, office.longitude); // Konumdan mesafeyi hesapla
+                            console.log(`Ofis: ${office.name}, Mesafe: ${distance.toFixed(2)} km`);
+
+                            
+                            if (distance <= 30) {
+                                L.marker([office.latitude, office.longitude]).addTo(map)
+                                    .bindPopup(`<b>${office.name}</b><br>${office.address} <br>(${distance.toFixed(2)} km)`);
+                            }
+                        });
+                    })
+                    .catch(error => console.error("Ofis verileri yüklenirken hata oluştu:", error));
+            }, error => {
+                console.error("Konum alınamadı:", error.message);
+                alert("Konum alınamadı! Tarayıcı izinlerini kontrol edin.");
+            });
+        } else {
+            console.error("Tarayıcınız konum bilgisini desteklemiyor.");
+            alert("Tarayıcınız konum bilgisini desteklemiyor.");
+        }
+    });
+</script>

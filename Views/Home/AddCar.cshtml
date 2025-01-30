@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Araç Ekle";
+}
+
+<h3>Araç Ekle</h3>
+
+<form id="addCarForm">
+    <div class="mb-3">
+        <label for="carMake" class="form-label">Marka</label>
+        <input type="text" id="carMake" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="carModel" class="form-label">Model</label>
+        <input type="text" id="carModel" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="carPrice" class="form-label">Fiyat</label>
+        <input type="number" id="carPrice" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="transmissionType" class="form-label">Şanzıman Tipi</label>
+        <select id="transmissionType" class="form-control">
+            <option value="Automatic">Otomatik</option>
+            <option value="Manual">Manuel</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="carDeposit" class="form-label">Depozito</label>
+        <input type="number" id="carDeposit" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="carMileage" class="form-label">Kilometre</label>
+        <input type="number" id="carMileage" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="carAge" class="form-label">Yaş</label>
+        <input type="number" id="carAge" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Araç Ekle</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Araç ekleme formu
+        document.getElementById("addCarForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Form verilerini al
+            var make = document.getElementById("carMake").value;
+            var model = document.getElementById("carModel").value;
+            var price = document.getElementById("carPrice").value;
+            var transmission = document.getElementById("transmissionType").value;
+            var deposit = document.getElementById("carDeposit").value;
+            var mileage = document.getElementById("carMileage").value;
+            var age = document.getElementById("carAge").value;
+
+            // Yeni araç verisini API'ye gönder
+            var carData = {
+                make: make,
+                model: model,
+                price: price,
+                transmission: transmission,
+                deposit: deposit,
+                mileage: mileage,
+                age: age
+            };
+
+            fetch('/Car/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(carData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Araç başarıyla eklendi!");
+                    // Formu sıfırla
+                    document.getElementById("addCarForm").reset();
+                })
+                .catch(error => {
+                    console.error("Araç eklenirken bir hata oluştu:", error);
+                    alert("Araç eklenirken bir hata oluştu.");
+                });
+        });
+    });
+</script>

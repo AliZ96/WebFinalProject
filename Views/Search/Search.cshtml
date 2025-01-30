@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Araç Arama";
+}
+
+<div class="container mt-4">
+    <h4 data-lang="searchTitle">Araçları Filtrele ve Sıralama</h4>
+    <form id="filterForm">
+        <!-- Ofis Arama -->
+        <div class="mb-3">
+            <label for="officeSearch" class="form-label" data-lang="officeLabel">Ofis Seç</label>
+            <input type="text" id="officeSearch" class="form-control" placeholder="Şehir veya ofis adı girin" data-lang-placeholder="officePlaceholder" list="officeSuggestions">
+            <datalist id="officeSuggestions">
+                <!-- Burada ofisler JavaScript ile eklenecek -->
+            </datalist>
+        </div>
+
+        <!-- Marka Filtreleme -->
+        <div class="mb-3">
+            <label for="carMake" class="form-label" data-lang="carMakeLabel">Marka</label>
+            <select class="form-select" id="carMake" data-lang-placeholder="carMakePlaceholder">
+                <option value="">Tüm Markalar</option>
+                <option value="Toyota">Toyota</option>
+                <option value="BMW">BMW</option>
+                <option value="Mercedes">Mercedes</option>
+                <option value="Audi">Audi</option>
+            </select>
+        </div>
+
+        <!-- Transmission Filtreleme -->
+        <div class="mb-3">
+            <label for="transmissionType" class="form-label" data-lang="transmissionLabel">Transmission</label>
+            <select class="form-select" id="transmissionType" data-lang-placeholder="transmissionPlaceholder">
+                <option value="">Tüm Tipler</option>
+                <option value="Manual">Manuel</option>
+                <option value="Automatic">Otomatik</option>
+            </select>
+        </div>
+
+        <!-- Fiyat Filtreleme -->
+        <div class="mb-3">
+            <label for="priceRange" class="form-label" data-lang="priceRangeLabel">Fiyat Aralığı</label>
+            <select class="form-select" id="priceRange" data-lang-placeholder="priceRangePlaceholder">
+                <option value="">Tüm Fiyatlar</option>
+                <option value="lowToHigh">Düşükten Yükseğe</option>
+                <option value="highToLow">Yüksekten Düşüğe</option>
+            </select>
+        </div>
+
+        <!-- Filtrele Butonu -->
+        <button type="submit" class="btn btn-primary" data-lang="filterButton">Filtrele</button>
+    </form>
+</div>
+
+<!-- Araçların Listeleneceği Bölüm -->
+<div id="carResults" class="container mt-4">
+    <h4 data-lang="resultsTitle">Sonuçlar</h4>
+    <div class="row" id="carList">
+        @foreach (var car in Model.Cars)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@car.Make @car.Model</h5>
+                        <p class="card-text" data-lang="priceLabel">Fiyat: @car.Price</p>
+                        <p class="card-text" data-lang="transmissionLabel">Transmission: @car.Transmission</p>
+                        <p class="card-text" data-lang="depositLabel">Deposit: @car.Deposit</p>
+                        <p class="card-text" data-lang="mileageLabel">Mileage: @car.Mileage km</p>
+                        <p class="card-text" data-lang="ageLabel">Age: @car.Age yıl</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
